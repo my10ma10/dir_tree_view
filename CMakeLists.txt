@@ -19,6 +19,10 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        dir_tree_model.h
+        dir_tree_model.cpp
+        dir_tree_view.h
+        dir_tree_view.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
