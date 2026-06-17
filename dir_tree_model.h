@@ -4,19 +4,12 @@
 #include <QObject>
 #include <QFileSystemModel>
 
-class DirTreeModel : public QObject
+class DirTreeModel : public QFileSystemModel
 {
 public:
     DirTreeModel(QObject *parent = nullptr);
 
-    QFileSystemModel* getModelPtr();
-
-    void setOption(QFileSystemModel::Option option, bool on = true);
-    QModelIndex index(const QString& path) const;
-
 private:
-    QFileSystemModel model_;
-
     // QHash for dirs sizes
 };
 
