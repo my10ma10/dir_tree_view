@@ -3,10 +3,13 @@
 
 #include "dir_tree_model.h"
 #include "dir_tree_view.h"
+#include "dir_filter_model.h"
 
 #include <QMainWindow>
 #include <QSortFilterProxyModel>
 #include <QCommandLineParser>
+#include <QLineEdit>
+#include <QCheckBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,12 +24,25 @@ public:
     ~MainWindow();
 
 private:
-    void parseCommandLine(QCommandLineParser& parser);
+    void parseCommandLine(QCommandLineParser& parser, const QApplication& app);
+    void setupRootPath();
+    void setupLayout();
+    void configureExpand(const QString& text);
+
 
     Ui::MainWindow *ui;
-    DirTreeModel* dir_model_;
-    DirTreeView* dir_view_;
-    QSortFilterProxyModel* sort_filter_model_;
+    DirTreeModel* dirModel_;
+    DirTreeView* dirView_;
 
+    DirFilterModel* filterModel_;
+
+    QLineEdit* lineEdit_;
+    QCheckBox* enableCaseSensetivityButton_;
+
+    QString rootPath_;
+
+private slots:
+    void pathChanged(const QString& text);
+    void enableCaseSensetivity();
 };
 #endif // MAINWINDOW_H

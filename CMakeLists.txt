@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         dir_tree_model.cpp
         dir_tree_view.h
         dir_tree_view.cpp
+        dir_filter_model.h
+        dir_filter_model.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
