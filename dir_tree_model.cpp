@@ -21,9 +21,6 @@ QVariant DirTreeModel::data(const QModelIndex &index, int role) const
 
             return "Обновить";
         }
-        else if (info.isSymbolicLink()) {
-            return "Ссылка";
-        }
     }
     return QFileSystemModel::data(index, role);
 }

@@ -6,7 +6,6 @@
 #include <QScreen>
 #include <QCommandLineOption>
 #include <QVBoxLayout>
-#include <QDebug>
 #include <QTimer>
 
 
@@ -156,7 +155,7 @@ void MainWindow::expandMatching(const QModelIndex &parent)
     for (int i = 0; i < rowsCount; ++i) {
         QModelIndex index = filterModel_->index(i, 0, parent);
 
-        if (filterModel_->rowCount(index) > 0) {
+        if (filterModel_->rowCount(parent) > 0) {
             dirView_->expand(index);
             expandMatching(index);
         }
@@ -264,12 +263,13 @@ void MainWindow::enableCaseSensetivity()
     }
 
     const QString& text = lineEdit_->text();
-    configureExpand(text);
+    pathChanged(text);
 }
 
 void MainWindow::enableDeepSearch(bool checked)
 {
     filterModel_->setSearchDepth(static_cast<SearchDepth>(checked));
+    pathChanged(lineEdit_->text());
 }
 
 void MainWindow::debouncePath(const QString &path)

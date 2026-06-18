@@ -2,7 +2,6 @@
 #include <QString>
 #include <QDir>
 #include <QFileSystemModel>
-#include <QDebug>
 
 DirFilterModel::DirFilterModel(QObject *parent)
     : QSortFilterProxyModel{parent}
@@ -12,16 +11,24 @@ DirFilterModel::DirFilterModel(QObject *parent)
 
 bool DirFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    if (matchedPaths_.isEmpty() && currentSearchPattern_.isEmpty())
-        return true;
-
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     if (!index.isValid()) return false;
+
+    auto fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
+
+    if (fsModel->filePath(index) == rootPath_)
+        return true;
+
+    if (!currentSearchPattern_.isEmpty() && matchedPaths_.isEmpty()) {
+        return false;
+    }
+    else if (currentSearchPattern_.isEmpty()) {
+        return true;
+    }
 
     QString name = sourceModel()->data(index).toString();
     if (name == "." || name == "..") return false;
 
-    auto fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
     QString path = QDir::cleanPath(fsModel->filePath(index));
 
     return matchedPaths_.contains(path);
