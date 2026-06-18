@@ -55,5 +55,6 @@ private slots:
     void enableDeepSearch(bool checked);
 
     void debouncePath(const QString& path);
+    void onTreeDoubleClicked(const QModelIndex& index);
 };
 #endif // MAINWINDOW_H

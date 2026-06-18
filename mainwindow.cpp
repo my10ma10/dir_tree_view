@@ -39,6 +39,7 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
     dirView_->setModel(filterModel_);
 
 
+
     setupRootPath();
 
     dirView_->setup();
@@ -60,8 +61,11 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
             this, &MainWindow::enableCaseSensetivity);
     connect(this->enableDeepSearchButton_, &QCheckBox::toggled,
                 this, &MainWindow::enableDeepSearch);
+
     connect(this->dirModel_, &QFileSystemModel::directoryLoaded,
             this, &MainWindow::debouncePath);
+    connect(this->dirView_, &QTreeView::doubleClicked,
+            this, &MainWindow::onTreeDoubleClicked);
 
 
     connect(this->debounceTimer_, &QTimer::timeout, this, [this]() {
@@ -166,10 +170,7 @@ QSet<QString> MainWindow::shallowSearchFindMatches(const QString &text)
     QDir dir(rootPath_);
 
     QFileInfoList entries = dir.entryInfoList(
-        QDir::AllEntries |
-        QDir::Hidden |
-        QDir::NoDotAndDotDot
-    );
+        QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot);
 
     for (const QFileInfo& info : entries) {
         if (info.fileName().contains(text,
@@ -189,9 +190,7 @@ QSet<QString> MainWindow::deepSearchFindMatches(const QString &text)
 
     QDirIterator it(
         rootPath_,
-        QDir::AllEntries |
-        QDir::Hidden |
-        QDir::NoDotAndDotDot,
+        QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot,
         QDirIterator::Subdirectories
     );
 
@@ -277,6 +276,18 @@ void MainWindow::debouncePath(const QString &path)
 {
     if (!path.startsWith(rootPath_)) return;
     debounceTimer_->start(150);
+}
+
+void MainWindow::onTreeDoubleClicked(const QModelIndex &proxyIndex)
+{
+    if (proxyIndex.column() != 1) return;
+
+    QModelIndex index = filterModel_->mapToSource(proxyIndex);
+    QFileInfo info = dirModel_->fileInfo(index);
+
+    if (!info.isDir()) return;
+
+    dirModel_->calculateDirSize(info.absoluteFilePath());
 }
 
 
