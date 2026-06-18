@@ -15,6 +15,8 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
 {
     ui->setupUi(this);
 
+    this->setWindowTitle("Dir Tree Viewer");
+
     dirModel_ = new DirTreeModel(this);
     dirView_ = new DirTreeView(this);
     filterModel_ = new DirFilterModel(this);

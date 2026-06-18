@@ -12,7 +12,7 @@ void DirTreeView::setup()
     this->setAnimated(false);
     this->setIndentation(20);
 
-    this->setSortingEnabled(true); // TODO: custom sorting further
+    this->setSortingEnabled(true);
 
     QScroller::grabGesture(this, QScroller::TouchGesture);
 }
