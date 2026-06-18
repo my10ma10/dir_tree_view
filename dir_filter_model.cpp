@@ -2,6 +2,7 @@
 #include <QString>
 #include <QDir>
 #include <QFileSystemModel>
+#include <QDebug>
 
 DirFilterModel::DirFilterModel(QObject *parent)
     : QSortFilterProxyModel{parent}
@@ -12,11 +13,10 @@ DirFilterModel::DirFilterModel(QObject *parent)
 bool DirFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-
     if (!index.isValid()) return false;
-    if (!sourceParent.isValid()) return true;
 
     QString name = sourceModel()->data(index).toString();
+    if (name == "." || name == "..") return false;
 
     auto fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
     QString path = fsModel->filePath(index);
@@ -29,26 +29,33 @@ bool DirFilterModel::matches(const QModelIndex &index, const QString& elemName) 
 {
     return
         elemName.contains(filterRegularExpression()) ||
-        hasMatchingAncestor(index) ||
         hasMatchingDescendant(index);
 }
 
-bool DirFilterModel::hasMatchingAncestor(const QModelIndex &index) const
-{
-    QModelIndex parent = index.parent();
-    while (parent.isValid()) {
-        QString name = sourceModel()->data(parent).toString();
-        if (name.contains(filterRegularExpression())) return true;
+//bool DirFilterModel::hasMatchingAncestor(const QModelIndex &index) const
+//{
+//    QModelIndex parent = index.parent();
+//    while (parent.isValid()) {
+//        QString name = sourceModel()->data(parent).toString();
+//        if (name.contains(filterRegularExpression())) return true;
 
-        parent = parent.parent();
-    }
-    return false;
-}
+//        parent = parent.parent();
+//    }
+//    return false;
+//}
 
 bool DirFilterModel::hasMatchingDescendant(const QModelIndex &index) const
 {
-//    qDebug() << sourceModel()->data(index).toString()
-//             << sourceModel()->rowCount(index);
+
+    if (searchDepth_ == SearchDepth::Shallow) return false;
+
+    auto fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
+    QString path = fsModel->filePath(index);
+
+    if (!path.startsWith(rootPath_)) return false;
+
+    if (fsModel->canFetchMore(index))
+        fsModel->fetchMore(index);
 
     const int rowsCount = sourceModel()->rowCount(index);
     for (int i = 0; i < rowsCount; ++i) {
@@ -62,4 +69,16 @@ bool DirFilterModel::hasMatchingDescendant(const QModelIndex &index) const
 void DirFilterModel::setRootPath(const QString& path)
 {
     rootPath_ = QDir::cleanPath(path);
+}
+
+void DirFilterModel::setSearchDepth(SearchDepth depth)
+{
+    searchDepth_ = depth;
+    invalidate();
+    qDebug() << (depth == SearchDepth::Deep ? "Deep"  : "Shallow");
+}
+
+SearchDepth DirFilterModel::getSearchDepth() const
+{
+    return searchDepth_;
 }

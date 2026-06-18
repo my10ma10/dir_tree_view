@@ -7,6 +7,7 @@
 #include <QCommandLineOption>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QTimer>
 
 
 MainWindow::MainWindow(const QApplication& app, QWidget *parent)
@@ -22,7 +23,7 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
     lineEdit_ = new QLineEdit(this);
     lineEdit_->setPlaceholderText("Поиск");
     enableCaseSensetivityButton_ = new QCheckBox("Учитывать регистр", this);
-
+    enableDeepSearchButton_ = new QCheckBox("Глубокий поиск", this);
 
     QCommandLineParser parser;
     parseCommandLine(parser, app);
@@ -33,6 +34,8 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
     filterModel_->setRootPath(rootPath_);
     filterModel_->setSourceModel(dirModel_);
     filterModel_->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    filterModel_->setRecursiveFilteringEnabled(true);
+
     dirView_->setModel(filterModel_);
 
 
@@ -47,13 +50,29 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
     dirView_->resize(availableSize / 2);
     dirView_->setColumnWidth(0, dirView_->width() / 3);
 
+    debounceTimer_ = new QTimer(this);
+    debounceTimer_->setSingleShot(true);
 
-    dirView_->setWindowTitle("Директории");
 
     connect(this->lineEdit_, &QLineEdit::textChanged,
             this, &MainWindow::pathChanged);
     connect(this->enableCaseSensetivityButton_, &QCheckBox::clicked,
             this, &MainWindow::enableCaseSensetivity);
+    connect(this->enableDeepSearchButton_, &QCheckBox::toggled,
+            this, &MainWindow::enableDeepSearch);
+    connect(this->dirModel_, &QFileSystemModel::directoryLoaded,
+            this, &MainWindow::debouncePath);
+
+
+    connect(this->debounceTimer_, &QTimer::timeout, this, [this]() {
+        filterModel_->invalidate();
+    });
+
+    connect(this->lineEdit_, &QLineEdit::textChanged, this, [this](const QString& text) {
+        pendingText_ = text;
+        debounceTimer_->start(300);
+    });
+
 }
 
 MainWindow::~MainWindow()
@@ -92,6 +111,7 @@ void MainWindow::setupLayout()
 
     topLayout->addWidget(lineEdit_);
     topLayout->addWidget(enableCaseSensetivityButton_);
+    topLayout->addWidget(enableDeepSearchButton_);
 
 
     QWidget* central_widget = new QWidget(this);
@@ -116,18 +136,35 @@ void MainWindow::setupRootPath()
 
 void MainWindow::configureExpand(const QString& text)
 {
-    if (text.isEmpty()) {
+    if (text.isEmpty() ||
+            filterModel_->getSearchDepth() == SearchDepth::Shallow
+    ) {
         dirView_->collapseAll();
     }
     else {
-        dirView_->expandAll();
+        expandMatching(dirView_->rootIndex());
+    }
+}
+
+void MainWindow::expandMatching(const QModelIndex &parent)
+{
+    const int rowsCount = filterModel_->rowCount(parent);
+    for (int i = 0; i < rowsCount; ++i) {
+        QModelIndex index = filterModel_->index(i, 0, parent);
+        if (filterModel_->rowCount(index) > 0) {
+            dirView_->expand(index);
+            expandMatching(index);
+        }
     }
 }
 
 void MainWindow::pathChanged(const QString& text)
 {
     filterModel_->setFilterRegularExpression(text);
-    configureExpand(text);
+    QTimer::singleShot(0, this, [this, text]() {
+        setupRootPath();
+        configureExpand(text);
+    });
 }
 
 void MainWindow::enableCaseSensetivity()
@@ -142,4 +179,16 @@ void MainWindow::enableCaseSensetivity()
     const QString& text = lineEdit_->text();
     configureExpand(text);
 }
+
+void MainWindow::enableDeepSearch(bool checked)
+{
+    filterModel_->setSearchDepth(static_cast<SearchDepth>(checked));
+}
+
+void MainWindow::debouncePath(const QString &path)
+{
+    if (!path.startsWith(rootPath_)) return;
+    debounceTimer_->start(150);
+}
+
 

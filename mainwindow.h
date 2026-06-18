@@ -28,6 +28,7 @@ private:
     void setupRootPath();
     void setupLayout();
     void configureExpand(const QString& text);
+    void expandMatching(const QModelIndex& parent);
 
 
     Ui::MainWindow *ui;
@@ -38,11 +39,18 @@ private:
 
     QLineEdit* lineEdit_;
     QCheckBox* enableCaseSensetivityButton_;
+    QCheckBox* enableDeepSearchButton_;
 
     QString rootPath_;
+
+    QTimer* debounceTimer_;
+    QString pendingText_;
 
 private slots:
     void pathChanged(const QString& text);
     void enableCaseSensetivity();
+    void enableDeepSearch(bool checked);
+
+    void debouncePath(const QString& path);
 };
 #endif // MAINWINDOW_H
