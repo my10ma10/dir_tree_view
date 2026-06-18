@@ -59,7 +59,7 @@ MainWindow::MainWindow(const QApplication& app, QWidget *parent)
     connect(this->enableCaseSensetivityButton_, &QCheckBox::clicked,
             this, &MainWindow::enableCaseSensetivity);
     connect(this->enableDeepSearchButton_, &QCheckBox::toggled,
-            this, &MainWindow::enableDeepSearch);
+                this, &MainWindow::enableDeepSearch);
     connect(this->dirModel_, &QFileSystemModel::directoryLoaded,
             this, &MainWindow::debouncePath);
 
@@ -151,6 +151,7 @@ void MainWindow::expandMatching(const QModelIndex &parent)
     const int rowsCount = filterModel_->rowCount(parent);
     for (int i = 0; i < rowsCount; ++i) {
         QModelIndex index = filterModel_->index(i, 0, parent);
+
         if (filterModel_->rowCount(index) > 0) {
             dirView_->expand(index);
             expandMatching(index);
@@ -158,13 +159,100 @@ void MainWindow::expandMatching(const QModelIndex &parent)
     }
 }
 
+QSet<QString> MainWindow::shallowSearchFindMatches(const QString &text)
+{
+    QSet<QString> result;
+
+    QDir dir(rootPath_);
+
+    QFileInfoList entries = dir.entryInfoList(
+        QDir::AllEntries |
+        QDir::Hidden |
+        QDir::NoDotAndDotDot
+    );
+
+    for (const QFileInfo& info : entries) {
+        if (info.fileName().contains(text,
+            filterModel_->filterCaseSensitivity()))
+        {
+            addAncestors(info.absoluteFilePath(), result);
+        }
+    }
+
+    return result;
+}
+
+QSet<QString> MainWindow::deepSearchFindMatches(const QString &text)
+{
+    QSet<QString> result;
+    if (text.isEmpty()) return result;
+
+    QDirIterator it(
+        rootPath_,
+        QDir::AllEntries |
+        QDir::Hidden |
+        QDir::NoDotAndDotDot,
+        QDirIterator::Subdirectories
+    );
+
+    while (it.hasNext()) {
+        QString path = it.next();
+
+        QFileInfo info(path);
+
+        if (info.fileName().contains(text,
+            filterModel_->filterCaseSensitivity()))
+        {
+            addAncestors(path, result);
+        }
+    }
+
+    return result;
+}
+
+void MainWindow::addAncestors(QString path, QSet<QString> &result)
+{
+    path = QDir::cleanPath(path);
+
+    while (!path.isEmpty()) {
+        result.insert(path);
+
+        if (path == rootPath_) break;
+
+        QFileInfo info(path);
+        QString parentPath = info.dir().absolutePath();
+
+        if (parentPath == path) break;
+
+        path = parentPath;
+    }
+}
+
 void MainWindow::pathChanged(const QString& text)
 {
-    filterModel_->setFilterRegularExpression(text);
-    QTimer::singleShot(0, this, [this, text]() {
-        setupRootPath();
-        configureExpand(text);
-    });
+    filterModel_->setSearchText(text);
+
+    if (text.isEmpty()) {
+        filterModel_->setMatchedPaths({});
+    }
+    else {
+        QSet<QString> matches;
+        if (filterModel_->getSearchDepth() == SearchDepth::Shallow) {
+            matches = shallowSearchFindMatches(text);
+        }
+        else {
+            matches = deepSearchFindMatches(text);
+        }
+
+        filterModel_->setMatchedPaths(matches);
+
+        QTimer::singleShot(0, this, [this]()
+        {
+            expandMatching(dirView_->rootIndex());
+        });
+    }
+
+    configureExpand(text);
 }
 
 void MainWindow::enableCaseSensetivity()

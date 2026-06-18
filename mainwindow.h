@@ -29,6 +29,9 @@ private:
     void setupLayout();
     void configureExpand(const QString& text);
     void expandMatching(const QModelIndex& parent);
+    QSet<QString> shallowSearchFindMatches(const QString& text);
+    QSet<QString> deepSearchFindMatches(const QString& text);
+    void addAncestors(QString path, QSet<QString>& result);
 
 
     Ui::MainWindow *ui;
