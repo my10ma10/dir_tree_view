@@ -14,7 +14,6 @@ variables:
 before_script:
   - apt-get update
   - apt-get install -y apt-transport-https ca-certificates
-  - apt-get install -y debian-archive-keyring
   - echo "deb http://deb.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list.d/debian.list
   - apt-get update
   - apt-get install -y build-essential git cmake qtbase5-dev qt5-qmake qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
