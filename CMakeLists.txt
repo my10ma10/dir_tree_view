@@ -63,3 +63,6 @@ set_target_properties(dir_view_test PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(dir_view_test)
 endif()
+
+install(TARGETS dir_view_test
+        RUNTIME DESTINATION bin)
