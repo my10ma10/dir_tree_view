@@ -13,8 +13,12 @@ variables:
 
 before_script:
     - apt-get update
+    - cat /etc/apt/sources.list
+    - apt-cache policy
+    - apt-cache search cmake
     - apt-get install -y apt-transport-https ca-certificates
-    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/repository-deb stable main" > /etc/apt/sources.list.d/astra-dev.list
+    - echo "deb https://dl.astralinux.ru/astra/stable/1.8_x86-64/repository-main 1.8.1 main contrib non-free" > /etc/apt/sources.list.d/astra-stable.list
+    - echo "deb https://dl.astralinux.ru/astra/stable/1.8_x86-64/repository-deb 1.8.1 main" > /etc/apt/sources.list.d/astra-deb.list
     - apt-get update
     - apt-get install -y build-essential git cmake qtbase5-dev qt5-default qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
 
