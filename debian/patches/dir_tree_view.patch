@@ -1,18 +1,7 @@
-0001-init-commit.patch
-0002-feat-add-dir-view-example-impl.patch
-0003-refactor-change-responsibility-allocation-add-model-.patch
-0004-feat-add-sort-filter-proxy-model-refactor-mainwindow.patch
-0005-feat-add-filtering-via-QLineEdit.patch
-0006-feat-add-shallow-and-deep-filtering.patch
-0007-fix-shallow-and-deep-search-boundaries-and-behaviour.patch
-0008-feat-add-dir-size-in-size-column-via-double-click-to.patch
-0009-fix-dirs-expand-root-search-instead-of-homedir-after.patch
-0010-Enhance-README-with-project-details-and-instructions.patch
-0011-feat-add-window-title.patch
-diff --git CMakeLists.txt CMakeLists.txt
+diff --git a/CMakeLists.txt b/CMakeLists.txt
 index f10e735..751c505 100644
---- CMakeLists.txt
-+++ CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -19,6 +19,12 @@ set(PROJECT_SOURCES
          mainwindow.cpp
          mainwindow.h
@@ -26,11 +15,38 @@ index f10e735..751c505 100644
  )
  
  if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-diff --git README.md README.md
+diff --git a/LICENSE b/LICENSE
+new file mode 100644
+index 0000000..7922633
+--- /dev/null
++++ b/LICENSE
+@@ -0,0 +1,21 @@
++MIT License
++
++Copyright (c) 2026 eyevievv
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
+diff --git a/README.md b/README.md
 new file mode 100644
 index 0000000..9e1de99
 --- /dev/null
-+++ README.md
++++ b/README.md
 @@ -0,0 +1,126 @@
 +# Dir Tree Viewer
 +
@@ -158,11 +174,1181 @@ index 0000000..9e1de99
 +  - QSortFilterProxyModel
 +- CMake
 +- git
-diff --git dir_filter_model.cpp dir_filter_model.cpp
+diff --git a/debian/changelog b/debian/changelog
+new file mode 100644
+index 0000000..52afe44
+--- /dev/null
++++ b/debian/changelog
+@@ -0,0 +1,5 @@
++dir-view-test (1.0-1) UNRELEASED; urgency=medium
++
++  * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
++
++ -- sokol <sokol28.nik@gmail.com>  Fri, 19 Jun 2026 17:53:43 +0300
+diff --git a/debian/control b/debian/control
+new file mode 100644
+index 0000000..1591676
+--- /dev/null
++++ b/debian/control
+@@ -0,0 +1,21 @@
++Source: dir-view-test
++Section: unknown
++Priority: optional
++Maintainer: sokol <sokol28.nik@gmail.com>
++Rules-Requires-Root: no
++Build-Depends:
++ debhelper-compat (= 13),
++ cmake,
++ qtbase5-dev,
++Standards-Version: 4.6.2
++Homepage: <insert the upstream URL, if relevant>
++#Vcs-Browser: https://salsa.debian.org/debian/dir-view-test
++#Vcs-Git: https://salsa.debian.org/debian/dir-view-test.git
++
++Package: dir-view-test
++Architecture: any
++Depends:
++ ${shlibs:Depends},
++ ${misc:Depends},
++Description: File system tree viewer on Qt
++ File system viewer with filtering, sorting and search support.
+diff --git a/debian/copyright b/debian/copyright
+new file mode 100644
+index 0000000..91feef4
+--- /dev/null
++++ b/debian/copyright
+@@ -0,0 +1,27 @@
++Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
++Source: <url://example.com>
++Upstream-Name: dir-view-test
++Upstream-Contact: sokol <sokol28.nik@gmail.com>
++
++Files:
++ *
++Copyright:
++ 2026 sokol <sokol28.nik@gmail.com>
++License: MIT
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++ .
++ The above copyright notice and this permission notice shall be included in all
++ copies or substantial portions of the Software.
++ .
++ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ SOFTWARE.	 
+diff --git a/debian/dir-view-test-docs.docs b/debian/dir-view-test-docs.docs
+new file mode 100644
+index 0000000..50a46c4
+--- /dev/null
++++ b/debian/dir-view-test-docs.docs
+@@ -0,0 +1,2 @@
++README.md
++TASK.md
+diff --git a/debian/dir-view-test.1 b/debian/dir-view-test.1
+new file mode 100644
+index 0000000..ac955b5
+--- /dev/null
++++ b/debian/dir-view-test.1
+@@ -0,0 +1,72 @@
++.\"                                      Hey, EMACS: -*- nroff -*-
++.\" (C) Copyright 2026 sokol <sokol28.nik@gmail.com>,
++.TH Dir-view-test 1 "June 19 2026"
++.\" Please adjust this date whenever revising the manpage.
++.\"
++.\" Some roff macros, for reference:
++.\" .nh        disable hyphenation
++.\" .hy        enable hyphenation
++.\" .ad l      left justify
++.\" .ad b      justify to both left and right margins
++.\" .nf        disable filling
++.\" .fi        enable filling
++.\" .br        insert line break
++.\" .sp <n>    insert n+1 empty lines
++.\" for manpage-specific macros, see man(7)
++.SH NAME
++dir-view-test \- program to view the file system tree with support for filtering, sorting, and searching.
++.SH SYNOPSIS
++.B dir-view-test
++.RI [ options ] 
++.RI [ directory ]
++.SH DESCRIPTION
++This manual page documents briefly describe
++.B dir-view-test
++application, which displays a file system tree using Qt widgets.
++.br
++The application supports:
++.IP \(bu 2
++file and directory filtering using regular expressions
++.IP \(bu 2
++shallow and deep search modes
++.IP \(bu 2
++sorting by columns
++.IP \(bu 2
++directory size calculation commands.
++.PP
++\fBdir-view-test\fP is a program that displays the file system structure as a tree widget.
++.SH OPTIONS
++These programs follow the usual GNU command line syntax, with long
++options starting with two dashes ('\-').
++A summary of options is included below.
++For a complete description, see the Info files.
++.TP
++.B \-h, \-\-help
++Show summary of options.
++.TP
++.B \-\-help\-all
++Show Qt\-specific command line options.
++.TP
++.B \-v, \-\-version
++Show program version.
++.TP
++.B \-c
++Disable custom icons.
++.TP
++.B \-w
++Disable filesystem watching.
++.SH EXAMPLES
++.TP
++.B dir\-view\-test
++Open the user's home directory.
++.TP
++.B dir\-view\-test /tmp
++Open the /tmp directory.
++.SH SEE ALSO
++.BR Dir View Example | Qt Widgets (1),
++.BR QFileSystemModel (1),
++.BR QSortFilterProxyModel (1),
++.BR QTreeView (1).
++.SH AUTHOR
++.br
++sokol
+diff --git a/debian/dir-view-test.md b/debian/dir-view-test.md
+new file mode 100644
+index 0000000..fa2d767
+--- /dev/null
++++ b/debian/dir-view-test.md
+@@ -0,0 +1,124 @@
++% dir-view-test(SECTION) | User Commands
++%
++% "June 19 2026"
++
++[comment]: # The lines above form a Pandoc metadata block. They must be
++[comment]: # the first ones in the file.
++[comment]: # See https://pandoc.org/MANUAL.html#metadata-blocks for details.
++
++[comment]: # pandoc -s -f markdown -t man package.md -o package.1
++[comment]: # 
++[comment]: # A manual page package.1 will be generated. You may view the
++[comment]: # manual page with: nroff -man package.1 | less. A typical entry
++[comment]: # in a Makefile or Makefile.am is:
++[comment]: # 
++[comment]: # package.1: package.md
++[comment]: #         pandoc --standalone --from=markdown --to=man $< --output=$@
++[comment]: # 
++[comment]: # The pandoc binary is found in the pandoc package. Please remember
++[comment]: # that if you create the nroff version in one of the debian/rules
++[comment]: # file targets, such as build, you will need to include pandoc in
++[comment]: # your Build-Depends control field.
++
++[comment]: # Remove the lines starting with '[comment]:' in this file in order
++[comment]: # to avoid warning messages from pandoc.
++
++# NAME
++
++dir-view-test - program to do something
++
++# SYNOPSIS
++
++**dir-view-test** **-e** _this_ [**\-\-example=that**] [{**-e** | **\-\-example**} _this_]
++                 [{**-e** | **\-\-example**} {_this_ | _that_}]
++
++**dir-view-test** [{**-h** | *\-\-help**} | {**-v** | **\-\-version**}]
++
++# DESCRIPTION
++
++The application displays the file system structure as a tree and allows you to 
++search for files and directories by name. By default, the current user's home 
++directory is used as the starting directory.
++
++The project is based on qt dirview-example project.
++
++# OPTIONS
++
++The program follows the usual GNU command line syntax, with long options
++starting with two dashes ('-'). A summary of options is included below. For
++a complete description, see the **info**(1) files.
++
++**-e** _this_, **\-\-example=**_that_
++:   Does this and that.
++
++**-h**, **\-\-help**
++:   Show summary of options.
++
++**-v**, **\-\-version**
++:   Show version of program.
++
++# FILES
++
++/etc/foo.conf
++:   The system-wide configuration file to control the behaviour of
++    dir-view-test. See **foo.conf**(5) for further details.
++
++${HOME}/.foo.conf
++:   The per-user configuration file to control the behaviour of
++    dir-view-test. See **foo.conf**(5) for further details.
++
++# ENVIRONMENT
++
++**FOO_CONF**
++:   If used, the defined file is used as configuration file (see also
++    the section called “FILES”).
++
++# DIAGNOSTICS
++
++The following diagnostics may be issued on stderr:
++
++Bad configuration file. Exiting.
++:   The configuration file seems to contain a broken configuration
++    line. Use the **\-\-verbose** option, to get more info.
++
++**dir-view-test** provides some return codes, that can be used in scripts:
++
++    Code Diagnostic
++    0 Program exited successfully.
++    1 The configuration file seems to be broken.
++
++# BUGS
++
++The program is currently limited to only work with the foobar library.
++
++The upstream BTS can be found at http://bugzilla.foo.tld.
++
++# SEE ALSO
++
++**bar**(1), **baz**(1), **foo.conf**(5)
++
++The programs are documented fully by The Rise and Fall of a Fooish Bar
++available via the **info**(1) system.
++
++# AUTHOR
++
++sokol <sokol28.nik@gmail.com>
++:   Wrote this manpage for the Debian system.
++
++# COPYRIGHT
++
++Copyright © 2007 sokol
++
++This manual page was written for the Debian system (and may be used by
++others).
++
++Permission is granted to copy, distribute and/or modify this document under
++the terms of the GNU General Public License, Version 2 or (at your option)
++any later version published by the Free Software Foundation.
++
++On Debian systems, the complete text of the GNU General Public License
++can be found in /usr/share/common-licenses/GPL.
++
++[comment]: #  Local Variables:
++[comment]: #  mode: markdown
++[comment]: #  End:
+diff --git a/debian/install b/debian/install
+new file mode 100644
+index 0000000..bbe6388
+--- /dev/null
++++ b/debian/install
+@@ -0,0 +1 @@
++build/dir_view_test usr/bin
+diff --git a/debian/patches/dir_tree_view.patch b/debian/patches/dir_tree_view.patch
+new file mode 100644
+index 0000000..17f75b4
+--- /dev/null
++++ b/debian/patches/dir_tree_view.patch
+@@ -0,0 +1,838 @@
++0001-init-commit.patch
++0002-feat-add-dir-view-example-impl.patch
++0003-refactor-change-responsibility-allocation-add-model-.patch
++0004-feat-add-sort-filter-proxy-model-refactor-mainwindow.patch
++0005-feat-add-filtering-via-QLineEdit.patch
++0006-feat-add-shallow-and-deep-filtering.patch
++0007-fix-shallow-and-deep-search-boundaries-and-behaviour.patch
++0008-feat-add-dir-size-in-size-column-via-double-click-to.patch
++0009-fix-dirs-expand-root-search-instead-of-homedir-after.patch
++0010-Enhance-README-with-project-details-and-instructions.patch
++0011-feat-add-window-title.patch
++diff --git CMakeLists.txt CMakeLists.txt
++index f10e735..751c505 100644
++--- CMakeLists.txt
+++++ CMakeLists.txt
++@@ -19,6 +19,12 @@ set(PROJECT_SOURCES
++         mainwindow.cpp
++         mainwindow.h
++         mainwindow.ui
+++        dir_tree_model.h
+++        dir_tree_model.cpp
+++        dir_tree_view.h
+++        dir_tree_view.cpp
+++        dir_filter_model.h
+++        dir_filter_model.cpp
++ )
++ 
++ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
++diff --git README.md README.md
++new file mode 100644
++index 0000000..9e1de99
++--- /dev/null
+++++ README.md
++@@ -0,0 +1,126 @@
+++# Dir Tree Viewer
+++
+++Графическое приложение на Qt для просмотра дерева файловой системы с поддержкой фильтрации, сортировки и поиска.
+++
+++## Описание
+++
+++Приложение отображает структуру файловой системы в виде дерева и позволяет выполнять поиск файлов и каталогов по имени. 
+++По умолчанию в качестве стартовой директории используется домашний каталог текущего пользователя. 
+++
+++Проект разработан на основе [dirview](https://doc.qt.io/archives/qt-5.15/qtwidgets-itemviews-dirview-example.html).
+++
+++<img width="807" height="634" alt="image" src="https://github.com/user-attachments/assets/fa639cff-874a-4060-b8ca-b2dad2214fbc" />
+++
+++## Возможности
+++### Фильтрация
+++
+++Пользователь вводит в строку поиска регулярное выражение, по которому ищутся файлы и директории. В обычном режиме поиск идет только в корневой директории дерева. 
+++В режиме глубокого поиска рекурсивно обходятся все подкаталоги. В дереве отображаются найденные элементы, а также директории,
+++необходимые для сохранения пути к найденным элементам.
+++
+++<img width="808" height="634" alt="image" src="https://github.com/user-attachments/assets/d3ebef48-1d0b-4597-aa8e-7e5511a9c68d" />
+++
+++Также доступна функция учета регистра.
+++
+++### Сортировка
+++
+++При нажатии на заголовок столбца выполняется сортировка элементов дерева
+++по соответствующему столбцу в порядке возрастания или убывания.
+++
+++### Размер директорий
+++
+++Для каталогов отображается надпись "Обновить", при двойном щелчке на которую выполняется рекурсивный подсчёт размера каталога.
+++Полученный результат сохраняется в кэше и отображается в таблице.
+++
+++## Структура проекта
+++
+++```text
+++├── CMakeLists.txt
+++├── dir_filter_model.cpp
+++├── dir_filter_model.h
+++├── dir_tree_model.cpp
+++├── dir_tree_model.h
+++├── dir_tree_view.cpp
+++├── dir_tree_view.h
+++├── main.cpp
+++├── mainwindow.cpp
+++├── mainwindow.h
+++├── mainwindow.ui
+++├── TASK.md
+++└── README.md
+++```
+++
+++## Компоненты приложения
+++
+++### DirTreeModel
+++
+++Наследует `QFileSystemModel`. Представляет собой модель системы файлов - предоставляет информацию о файлах и директориях файловой системы. 
+++
+++Отвечает за работу с файловой системой и хранение кэша рассчитанных размеров. 
+++
+++Поддерживает ленивую загрузку по мере обращения к узлам дерева.
+++
+++### DirFilterModel
+++
+++Наследует `QSortFilterProxyModel`. Является прокси-посредником между моделью и отображением. 
+++Применяет фильтрацию файлов по регулярному выражению. 
+++
+++Узел проходит фильтр, если выполняется хотя бы одно из условий:
+++- имя узла содержит паттерн поиска.
+++- один из потомков узла содержит паттерн (в режиме глубокого поиска).
+++
+++## DirTreeView
+++
+++Наследует QTreeView. Отвечает за визуальное отображение дерева. Принимает DirFilterModel как модель.
+++
+++### MainWindow
+++
+++Главное окно приложения.
+++
+++Помимо виджета дерева файлов содержит:
+++- Строку поиска;
+++- Кнопку «Учитывать регистр»;
+++- Кнопку «Глубокий поиск».
+++
+++## Сборка
+++
+++### Требования
+++
+++- C++17+;
+++- CMake;
+++- Qt 5.15.
+++
+++### Сборка с CMake
+++
+++```bash
+++cmake -S . -B build
+++cmake --build build
+++```
+++
+++### Запуск
+++
+++```bash
+++./dir_view_test [опции] [директория]
+++```
+++
+++### Параметры
+++```text
+++  -h, --help     Вывод справки по параметрам командной строки.
+++  --help-all     Вывод справки с особыми параметрами Qt.
+++  -v, --version  Показать сведения о версии.
+++  -c             Отключить отображение пользовательских иконок.
+++  -w             Отключить отслеживание изменений.
+++```
+++### Аргументы
+++`директория` - начальная директория дерева (абсолютный путь)
+++
+++
+++## Используемые технологии
+++- C++
+++- Qt
+++  - Qt Widgets
+++  - QTreeView
+++  - QFileSystemModel
+++  - QSortFilterProxyModel
+++- CMake
+++- git
++diff --git dir_filter_model.cpp dir_filter_model.cpp
++new file mode 100644
++index 0000000..4f552b9
++--- /dev/null
+++++ dir_filter_model.cpp
++@@ -0,0 +1,61 @@
+++#include "dir_filter_model.h"
+++#include <QString>
+++#include <QDir>
+++#include <QFileSystemModel>
+++
+++DirFilterModel::DirFilterModel(QObject *parent)
+++    : QSortFilterProxyModel{parent}
+++{
+++
+++}
+++
+++bool DirFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+++{
+++    QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+++    if (!index.isValid()) return false;
+++
+++    auto fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
+++
+++    if (fsModel->filePath(index) == rootPath_)
+++        return true;
+++
+++    if (!currentSearchPattern_.isEmpty() && matchedPaths_.isEmpty()) {
+++        return false;
+++    }
+++    else if (currentSearchPattern_.isEmpty()) {
+++        return true;
+++    }
+++
+++    QString name = sourceModel()->data(index).toString();
+++    if (name == "." || name == "..") return false;
+++
+++    QString path = QDir::cleanPath(fsModel->filePath(index));
+++
+++    return matchedPaths_.contains(path);
+++}
+++
+++void DirFilterModel::setRootPath(const QString& path)
+++{
+++    rootPath_ = QDir::cleanPath(path);
+++}
+++
+++void DirFilterModel::setMatchedPaths(const QSet<QString> paths)
+++{
+++    matchedPaths_ = paths;
+++    invalidateFilter();
+++}
+++
+++void DirFilterModel::setSearchDepth(SearchDepth depth)
+++{
+++    searchDepth_ = depth;
+++}
+++
+++void DirFilterModel::setSearchText(const QString& text)
+++{
+++    currentSearchPattern_ = text;
+++}
+++
+++SearchDepth DirFilterModel::getSearchDepth() const
+++{
+++    return searchDepth_;
+++}
++diff --git dir_filter_model.h dir_filter_model.h
++new file mode 100644
++index 0000000..0aa08ea
++--- /dev/null
+++++ dir_filter_model.h
++@@ -0,0 +1,35 @@
+++#ifndef DIRFILTERMODEL_H
+++#define DIRFILTERMODEL_H
+++
+++#include <QSortFilterProxyModel>
+++#include <QWidget>
+++#include <QSet>
+++
+++enum class SearchDepth { Shallow, Deep };
+++
+++class DirFilterModel : public QSortFilterProxyModel
+++{
+++    Q_OBJECT
+++
+++public:
+++    explicit DirFilterModel(QObject *parent = nullptr);
+++
+++    void setRootPath(const QString& path);
+++    void setSearchDepth(SearchDepth depth);
+++    void setMatchedPaths(const QSet<QString> paths);
+++    void setSearchText(const QString& text);
+++
+++    SearchDepth getSearchDepth() const;
+++
+++protected:
+++    bool filterAcceptsRow(int sourceRow,
+++                const QModelIndex &sourceParent) const override;
+++
+++
+++    QSet<QString> matchedPaths_;
+++    QString rootPath_;
+++    SearchDepth searchDepth_ = SearchDepth::Shallow;
+++    QString currentSearchPattern_;
+++};
+++
+++#endif // DIRFILTERMODEL_H
++diff --git dir_tree_model.cpp dir_tree_model.cpp
++new file mode 100644
++index 0000000..fab829b
++--- /dev/null
+++++ dir_tree_model.cpp
++@@ -0,0 +1,51 @@
+++#include "dir_tree_model.h"
+++#include <QLocale>
+++
+++DirTreeModel::DirTreeModel(QObject *parent)
+++    : QFileSystemModel(parent)
+++{
+++    this->setRootPath("");
+++    this->setFilter(QDir::AllEntries | QDir::Hidden | QDir::System);
+++}
+++
+++QVariant DirTreeModel::data(const QModelIndex &index, int role) const
+++{
+++    if (index.column() == 1 && role == Qt::DisplayRole) {
+++        QFileInfo info = fileInfo(index);
+++
+++        if (info.isDir()) {
+++            auto it = dirSizes_.find(info.absoluteFilePath());
+++
+++            if (it != dirSizes_.end())
+++                return QLocale().formattedDataSize(it.value());
+++
+++            return "Обновить";
+++        }
+++    }
+++    return QFileSystemModel::data(index, role);
+++}
+++
+++void DirTreeModel::calculateDirSize(const QString &path)
+++{
+++    qint64 size = 0;
+++
+++    QDirIterator it(
+++        path,
+++        QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot,
+++        QDirIterator::Subdirectories
+++    );
+++
+++    while (it.hasNext() && !it.fileInfo().isSymLink())
+++    {
+++        it.next();
+++        size += it.fileInfo().size();
+++    }
+++
+++    dirSizes_[path] = size;
+++
+++    QModelIndex idx = index(path);
+++
+++    emit dataChanged(this->index(idx.row(), 1, idx.parent()),
+++                     this->index(idx.row(), 1, idx.parent()));
+++}
+++
++diff --git dir_tree_model.h dir_tree_model.h
++new file mode 100644
++index 0000000..c93ffe4
++--- /dev/null
+++++ dir_tree_model.h
++@@ -0,0 +1,20 @@
+++#ifndef DIRTREEMODEL_H
+++#define DIRTREEMODEL_H
+++
+++#include <QObject>
+++#include <QFileSystemModel>
+++#include <QHash>
+++
+++class DirTreeModel : public QFileSystemModel
+++{
+++public:
+++    DirTreeModel(QObject *parent = nullptr);
+++
+++    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+++    void calculateDirSize(const QString& path);
+++
+++private:
+++    QHash<QString, qint64> dirSizes_;
+++};
+++
+++#endif // DIRTREEMODEL_H
++diff --git dir_tree_view.cpp dir_tree_view.cpp
++new file mode 100644
++index 0000000..42478c9
++--- /dev/null
+++++ dir_tree_view.cpp
++@@ -0,0 +1,18 @@
+++#include "dir_tree_view.h"
+++#include <QScroller>
+++
+++DirTreeView::DirTreeView(QWidget *parent)
+++    : QTreeView(parent)
+++{
+++
+++}
+++
+++void DirTreeView::setup()
+++{
+++    this->setAnimated(false);
+++    this->setIndentation(20);
+++
+++    this->setSortingEnabled(true);
+++
+++    QScroller::grabGesture(this, QScroller::TouchGesture);
+++}
++diff --git dir_tree_view.h dir_tree_view.h
++new file mode 100644
++index 0000000..8f860fe
++--- /dev/null
+++++ dir_tree_view.h
++@@ -0,0 +1,16 @@
+++#ifndef DIRTREEVIEW_H
+++#define DIRTREEVIEW_H
+++
+++#include <QWidget>
+++#include <QTreeView>
+++
+++class DirTreeView : public QTreeView
+++{
+++public:
+++    DirTreeView(QWidget *parent = nullptr);
+++
+++    void setup();
+++
+++};
+++
+++#endif // DIRTREEVIEW_H
++diff --git main.cpp main.cpp
++index 9e95bfa..d2688ad 100644
++--- main.cpp
+++++ main.cpp
++@@ -1,70 +1,13 @@
++ #include "mainwindow.h"
++ 
++ #include <QApplication>
++-#include <QFileSystemModel>
++-#include <QFileIconProvider>
++-#include <QScreen>
++-#include <QScroller>
++-#include <QTreeView>
++-#include <QCommandLineParser>
++-#include <QCommandLineOption>
++ 
++ int main(int argc, char *argv[]) {
++     QApplication app(argc, argv);
++     QCoreApplication::setApplicationVersion(QT_VERSION_STR);
++ 
++-    QCommandLineParser parser;
++-    parser.setApplicationDescription("Утилита отображения дерева файловой системы");
++-    parser.addHelpOption();
++-    parser.addVersionOption();
++-
++-    QCommandLineOption dontUseCustomDirectoryIconsOption("c", "Отключить отображение пользовательских иконок.");
++-    parser.addOption(dontUseCustomDirectoryIconsOption);
++-
++-    QCommandLineOption dontWatchOption("w", "Отключить отслеживание изменений.");
++-    parser.addOption(dontWatchOption);
++-
++-    parser.addPositionalArgument("директория", "Начальная директория.");
++-    parser.process(app);
++-
++-    const QString rootPath = parser.positionalArguments().isEmpty()
++-        ? QString(QDir::homePath()) : parser.positionalArguments().first();
++-
++-
++-    QFileSystemModel model;
++-    model.setRootPath("");
++-
++-    if (parser.isSet(dontUseCustomDirectoryIconsOption)) {
++-        model.setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
++-    }
++-    if (parser.isSet(dontWatchOption)) {
++-        model.setOption(QFileSystemModel::DontWatchForChanges);
++-    }
++-
++-    QTreeView tree;
++-    tree.setModel(&model);
++-
++-    if (!rootPath.isEmpty()) {
++-        const QModelIndex rootIndex = model.index(QDir::cleanPath(rootPath));
++-        if (rootIndex.isValid()) {
++-            tree.setRootIndex(rootIndex);
++-        }
++-    }
++-
++-    // Demonstrating look and feel features
++-//    tree.setAnimated(false);
++-    tree.setIndentation(20);
++-    tree.setSortingEnabled(true);
++-
++-    const QSize availableSize = tree.screen()->availableGeometry().size();
++-    tree.resize(availableSize / 2);
++-    tree.setColumnWidth(0, tree.width() / 3);
++-
++-    // Make it flickable on touchscreens
++-    QScroller::grabGesture(&tree, QScroller::TouchGesture);
++-
++-    tree.setWindowTitle(QObject::tr("Dir View"));
++-    tree.show();
+++    MainWindow window(app);
+++    window.show();
++ 
++     return app.exec();
++ }
++diff --git mainwindow.cpp mainwindow.cpp
++index a06fc8e..1f945ae 100644
++--- mainwindow.cpp
+++++ mainwindow.cpp
++@@ -1,11 +1,83 @@
++ #include "mainwindow.h"
++ #include "./ui_mainwindow.h"
++ 
++-MainWindow::MainWindow(QWidget *parent)
+++#include <QDir>
+++#include <QFileIconProvider>
+++#include <QScreen>
+++#include <QCommandLineOption>
+++#include <QVBoxLayout>
+++#include <QTimer>
+++
+++
+++MainWindow::MainWindow(const QApplication& app, QWidget *parent)
++     : QMainWindow(parent)
++     , ui(new Ui::MainWindow)
++ {
++     ui->setupUi(this);
+++
+++    this->setWindowTitle("Dir Tree Viewer");
+++
+++    dirModel_ = new DirTreeModel(this);
+++    dirView_ = new DirTreeView(this);
+++    filterModel_ = new DirFilterModel(this);
+++
+++    lineEdit_ = new QLineEdit(this);
+++    lineEdit_->setPlaceholderText("Поиск");
+++    enableCaseSensetivityButton_ = new QCheckBox("Учитывать регистр", this);
+++    enableDeepSearchButton_ = new QCheckBox("Глубокий поиск", this);
+++
+++    QCommandLineParser parser;
+++    parseCommandLine(parser, app);
+++
+++    rootPath_ = parser.positionalArguments().isEmpty()
+++        ? QString(QDir::homePath()) : parser.positionalArguments().first();
+++
+++    filterModel_->setRootPath(rootPath_);
+++    filterModel_->setSourceModel(dirModel_);
+++    filterModel_->setFilterCaseSensitivity(Qt::CaseInsensitive);
+++    filterModel_->setRecursiveFilteringEnabled(true);
+++
+++    dirView_->setModel(filterModel_);
+++
+++
+++
+++    setupRootPath();
+++
+++    dirView_->setup();
+++
+++    setupLayout();
+++
+++    const QSize availableSize = \
+++            dirView_->screen()->availableGeometry().size();
+++    dirView_->resize(availableSize / 2);
+++    dirView_->setColumnWidth(0, dirView_->width() / 3);
+++
+++    debounceTimer_ = new QTimer(this);
+++    debounceTimer_->setSingleShot(true);
+++
+++
+++    connect(this->lineEdit_, &QLineEdit::textChanged,
+++            this, &MainWindow::pathChanged);
+++    connect(this->enableCaseSensetivityButton_, &QCheckBox::clicked,
+++            this, &MainWindow::enableCaseSensetivity);
+++    connect(this->enableDeepSearchButton_, &QCheckBox::toggled,
+++                this, &MainWindow::enableDeepSearch);
+++
+++    connect(this->dirModel_, &QFileSystemModel::directoryLoaded,
+++            this, &MainWindow::debouncePath);
+++    connect(this->dirView_, &QTreeView::doubleClicked,
+++            this, &MainWindow::onTreeDoubleClicked);
+++
+++
+++    connect(this->debounceTimer_, &QTimer::timeout, this, [this]() {
+++        filterModel_->invalidate();
+++    });
+++
+++    connect(this->lineEdit_, &QLineEdit::textChanged, this, [this](const QString& text) {
+++        pendingText_ = text;
+++        debounceTimer_->start(300);
+++    });
+++
++ }
++ 
++ MainWindow::~MainWindow()
++@@ -13,3 +85,211 @@ MainWindow::~MainWindow()
++     delete ui;
++ }
++ 
+++void MainWindow::parseCommandLine(QCommandLineParser& parser, const QApplication& app)
+++{
+++    parser.setApplicationDescription("Утилита отображения дерева файловой системы");
+++    parser.addHelpOption();
+++    parser.addVersionOption();
+++
+++    QCommandLineOption dontUseCustomDirectoryIconsOption("c", "Отключить отображение пользовательских иконок.");
+++    parser.addOption(dontUseCustomDirectoryIconsOption);
+++
+++    QCommandLineOption dontWatchOption("w", "Отключить отслеживание изменений.");
+++    parser.addOption(dontWatchOption);
+++
+++    parser.addPositionalArgument("директория", "Начальная директория.");
+++
+++    parser.process(app);
+++
+++    if (parser.isSet(dontUseCustomDirectoryIconsOption)) {
+++        dirModel_->setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
+++    }
+++    if (parser.isSet(dontWatchOption)) {
+++        dirModel_->setOption(QFileSystemModel::DontWatchForChanges);
+++    }
+++
+++}
+++
+++void MainWindow::setupLayout()
+++{
+++    QHBoxLayout* topLayout = new QHBoxLayout;
+++
+++    topLayout->addWidget(lineEdit_);
+++    topLayout->addWidget(enableCaseSensetivityButton_);
+++    topLayout->addWidget(enableDeepSearchButton_);
+++
+++
+++    QWidget* central_widget = new QWidget(this);
+++
+++    QVBoxLayout* layout = new QVBoxLayout(central_widget);
+++    layout->addLayout(topLayout);
+++    layout->addWidget(dirView_);
+++
+++    setCentralWidget(central_widget);
+++}
+++
+++void MainWindow::setupRootPath()
+++{
+++    if (!rootPath_.isEmpty()) {
+++        const QModelIndex sourceIndex = dirModel_->index(QDir::cleanPath(rootPath_));
+++        if (sourceIndex.isValid()) {
+++            const QModelIndex proxyIndex = filterModel_->mapFromSource(sourceIndex);
+++            dirView_->setRootIndex(proxyIndex);
+++        }
+++    }
+++}
+++
+++void MainWindow::configureExpand(const QString& text)
+++{
+++    if (text.isEmpty() ||
+++            filterModel_->getSearchDepth() == SearchDepth::Shallow
+++    ) {
+++        dirView_->collapseAll();
+++    }
+++    else {
+++        expandMatching(dirView_->rootIndex());
+++    }
+++}
+++
+++void MainWindow::expandMatching(const QModelIndex &parent)
+++{
+++    const int rowsCount = filterModel_->rowCount(parent);
+++    for (int i = 0; i < rowsCount; ++i) {
+++        QModelIndex index = filterModel_->index(i, 0, parent);
+++
+++        if (filterModel_->rowCount(parent) > 0) {
+++            dirView_->expand(index);
+++            expandMatching(index);
+++        }
+++    }
+++}
+++
+++QSet<QString> MainWindow::shallowSearchFindMatches(const QString &text)
+++{
+++    QSet<QString> result;
+++
+++    QDir dir(rootPath_);
+++
+++    QFileInfoList entries = dir.entryInfoList(
+++        QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot);
+++
+++    for (const QFileInfo& info : entries) {
+++        if (info.fileName().contains(text,
+++            filterModel_->filterCaseSensitivity()))
+++        {
+++            addAncestors(info.absoluteFilePath(), result);
+++        }
+++    }
+++
+++    return result;
+++}
+++
+++QSet<QString> MainWindow::deepSearchFindMatches(const QString &text)
+++{
+++    QSet<QString> result;
+++    if (text.isEmpty()) return result;
+++
+++    QDirIterator it(
+++        rootPath_,
+++        QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot,
+++        QDirIterator::Subdirectories
+++    );
+++
+++    while (it.hasNext()) {
+++        QString path = it.next();
+++
+++        QFileInfo info(path);
+++
+++        if (info.fileName().contains(text,
+++            filterModel_->filterCaseSensitivity()))
+++        {
+++            addAncestors(path, result);
+++        }
+++    }
+++
+++    return result;
+++}
+++
+++void MainWindow::addAncestors(QString path, QSet<QString> &result)
+++{
+++    path = QDir::cleanPath(path);
+++
+++    while (!path.isEmpty()) {
+++        result.insert(path);
+++
+++        if (path == rootPath_) break;
+++
+++        QFileInfo info(path);
+++        QString parentPath = info.dir().absolutePath();
+++
+++        if (parentPath == path) break;
+++
+++        path = parentPath;
+++    }
+++}
+++
+++void MainWindow::pathChanged(const QString& text)
+++{
+++    filterModel_->setSearchText(text);
+++
+++    if (text.isEmpty()) {
+++        filterModel_->setMatchedPaths({});
+++    }
+++    else {
+++        QSet<QString> matches;
+++        if (filterModel_->getSearchDepth() == SearchDepth::Shallow) {
+++            matches = shallowSearchFindMatches(text);
+++        }
+++        else {
+++            matches = deepSearchFindMatches(text);
+++        }
+++
+++        filterModel_->setMatchedPaths(matches);
+++
+++        QTimer::singleShot(0, this, [this]()
+++        {
+++            expandMatching(dirView_->rootIndex());
+++        });
+++    }
+++
+++    configureExpand(text);
+++}
+++
+++void MainWindow::enableCaseSensetivity()
+++{
+++    if (filterModel_->filterCaseSensitivity() != Qt::CaseSensitive) {
+++        filterModel_->setFilterCaseSensitivity(Qt::CaseSensitive);
+++    }
+++    else {
+++        filterModel_->setFilterCaseSensitivity(Qt::CaseInsensitive);
+++    }
+++
+++    const QString& text = lineEdit_->text();
+++    pathChanged(text);
+++}
+++
+++void MainWindow::enableDeepSearch(bool checked)
+++{
+++    filterModel_->setSearchDepth(static_cast<SearchDepth>(checked));
+++    pathChanged(lineEdit_->text());
+++}
+++
+++void MainWindow::debouncePath(const QString &path)
+++{
+++    if (!path.startsWith(rootPath_)) return;
+++    debounceTimer_->start(150);
+++}
+++
+++void MainWindow::onTreeDoubleClicked(const QModelIndex &proxyIndex)
+++{
+++    if (proxyIndex.column() != 1) return;
+++
+++    QModelIndex index = filterModel_->mapToSource(proxyIndex);
+++    QFileInfo info = dirModel_->fileInfo(index);
+++
+++    if (!info.isDir()) return;
+++
+++    dirModel_->calculateDirSize(info.absoluteFilePath());
+++}
+++
+++
++diff --git mainwindow.h mainwindow.h
++index 4643e32..32e96f3 100644
++--- mainwindow.h
+++++ mainwindow.h
++@@ -1,7 +1,15 @@
++ #ifndef MAINWINDOW_H
++ #define MAINWINDOW_H
++ 
+++#include "dir_tree_model.h"
+++#include "dir_tree_view.h"
+++#include "dir_filter_model.h"
+++
++ #include <QMainWindow>
+++#include <QSortFilterProxyModel>
+++#include <QCommandLineParser>
+++#include <QLineEdit>
+++#include <QCheckBox>
++ 
++ QT_BEGIN_NAMESPACE
++ namespace Ui { class MainWindow; }
++@@ -12,10 +20,41 @@ class MainWindow : public QMainWindow
++     Q_OBJECT
++ 
++ public:
++-    MainWindow(QWidget *parent = nullptr);
+++    MainWindow(const QApplication& app, QWidget *parent = nullptr);
++     ~MainWindow();
++ 
++ private:
+++    void parseCommandLine(QCommandLineParser& parser, const QApplication& app);
+++    void setupRootPath();
+++    void setupLayout();
+++    void configureExpand(const QString& text);
+++    void expandMatching(const QModelIndex& parent);
+++    QSet<QString> shallowSearchFindMatches(const QString& text);
+++    QSet<QString> deepSearchFindMatches(const QString& text);
+++    void addAncestors(QString path, QSet<QString>& result);
+++
+++
++     Ui::MainWindow *ui;
+++    DirTreeModel* dirModel_;
+++    DirTreeView* dirView_;
+++
+++    DirFilterModel* filterModel_;
+++
+++    QLineEdit* lineEdit_;
+++    QCheckBox* enableCaseSensetivityButton_;
+++    QCheckBox* enableDeepSearchButton_;
+++
+++    QString rootPath_;
+++
+++    QTimer* debounceTimer_;
+++    QString pendingText_;
+++
+++private slots:
+++    void pathChanged(const QString& text);
+++    void enableCaseSensetivity();
+++    void enableDeepSearch(bool checked);
+++
+++    void debouncePath(const QString& path);
+++    void onTreeDoubleClicked(const QModelIndex& index);
++ };
++ #endif // MAINWINDOW_H
+diff --git a/debian/patches/series b/debian/patches/series
+new file mode 100644
+index 0000000..4cb2310
+--- /dev/null
++++ b/debian/patches/series
+@@ -0,0 +1 @@
++dir_tree_view.patch
+diff --git a/debian/rules b/debian/rules
+new file mode 100755
+index 0000000..050e29a
+--- /dev/null
++++ b/debian/rules
+@@ -0,0 +1,4 @@
++#!/usr/bin/make -f
++
++%:
++	dh $@ --buildsystem=cmake
+diff --git a/debian/source/format b/debian/source/format
+new file mode 100644
+index 0000000..163aaf8
+--- /dev/null
++++ b/debian/source/format
+@@ -0,0 +1 @@
++3.0 (quilt)
+diff --git a/debian/upstream/metadata.ex b/debian/upstream/metadata.ex
+new file mode 100644
+index 0000000..9a3274a
+--- /dev/null
++++ b/debian/upstream/metadata.ex
+@@ -0,0 +1,2 @@
++Repository: https://vgit.mirea.ru/sokol28.nik/dir-view-test.git
++Repository-Browse: https://vgit.mirea.ru/sokol28.nik/dir-view-test
+diff --git a/dir_filter_model.cpp b/dir_filter_model.cpp
 new file mode 100644
 index 0000000..4f552b9
 --- /dev/null
-+++ dir_filter_model.cpp
++++ b/dir_filter_model.cpp
 @@ -0,0 +1,61 @@
 +#include "dir_filter_model.h"
 +#include <QString>
@@ -225,11 +1411,11 @@ index 0000000..4f552b9
 +{
 +    return searchDepth_;
 +}
-diff --git dir_filter_model.h dir_filter_model.h
+diff --git a/dir_filter_model.h b/dir_filter_model.h
 new file mode 100644
 index 0000000..0aa08ea
 --- /dev/null
-+++ dir_filter_model.h
++++ b/dir_filter_model.h
 @@ -0,0 +1,35 @@
 +#ifndef DIRFILTERMODEL_H
 +#define DIRFILTERMODEL_H
@@ -266,11 +1452,11 @@ index 0000000..0aa08ea
 +};
 +
 +#endif // DIRFILTERMODEL_H
-diff --git dir_tree_model.cpp dir_tree_model.cpp
+diff --git a/dir_tree_model.cpp b/dir_tree_model.cpp
 new file mode 100644
 index 0000000..fab829b
 --- /dev/null
-+++ dir_tree_model.cpp
++++ b/dir_tree_model.cpp
 @@ -0,0 +1,51 @@
 +#include "dir_tree_model.h"
 +#include <QLocale>
@@ -323,11 +1509,11 @@ index 0000000..fab829b
 +                     this->index(idx.row(), 1, idx.parent()));
 +}
 +
-diff --git dir_tree_model.h dir_tree_model.h
+diff --git a/dir_tree_model.h b/dir_tree_model.h
 new file mode 100644
 index 0000000..c93ffe4
 --- /dev/null
-+++ dir_tree_model.h
++++ b/dir_tree_model.h
 @@ -0,0 +1,20 @@
 +#ifndef DIRTREEMODEL_H
 +#define DIRTREEMODEL_H
@@ -349,11 +1535,11 @@ index 0000000..c93ffe4
 +};
 +
 +#endif // DIRTREEMODEL_H
-diff --git dir_tree_view.cpp dir_tree_view.cpp
+diff --git a/dir_tree_view.cpp b/dir_tree_view.cpp
 new file mode 100644
 index 0000000..42478c9
 --- /dev/null
-+++ dir_tree_view.cpp
++++ b/dir_tree_view.cpp
 @@ -0,0 +1,18 @@
 +#include "dir_tree_view.h"
 +#include <QScroller>
@@ -373,11 +1559,11 @@ index 0000000..42478c9
 +
 +    QScroller::grabGesture(this, QScroller::TouchGesture);
 +}
-diff --git dir_tree_view.h dir_tree_view.h
+diff --git a/dir_tree_view.h b/dir_tree_view.h
 new file mode 100644
 index 0000000..8f860fe
 --- /dev/null
-+++ dir_tree_view.h
++++ b/dir_tree_view.h
 @@ -0,0 +1,16 @@
 +#ifndef DIRTREEVIEW_H
 +#define DIRTREEVIEW_H
@@ -395,10 +1581,10 @@ index 0000000..8f860fe
 +};
 +
 +#endif // DIRTREEVIEW_H
-diff --git main.cpp main.cpp
+diff --git a/main.cpp b/main.cpp
 index 9e95bfa..d2688ad 100644
---- main.cpp
-+++ main.cpp
+--- a/main.cpp
++++ b/main.cpp
 @@ -1,70 +1,13 @@
  #include "mainwindow.h"
  
@@ -472,10 +1658,10 @@ index 9e95bfa..d2688ad 100644
  
      return app.exec();
  }
-diff --git mainwindow.cpp mainwindow.cpp
+diff --git a/mainwindow.cpp b/mainwindow.cpp
 index a06fc8e..1f945ae 100644
---- mainwindow.cpp
-+++ mainwindow.cpp
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
 @@ -1,11 +1,83 @@
  #include "mainwindow.h"
  #include "./ui_mainwindow.h"
@@ -773,10 +1959,10 @@ index a06fc8e..1f945ae 100644
 +}
 +
 +
-diff --git mainwindow.h mainwindow.h
+diff --git a/mainwindow.h b/mainwindow.h
 index 4643e32..32e96f3 100644
---- mainwindow.h
-+++ mainwindow.h
+--- a/mainwindow.h
++++ b/mainwindow.h
 @@ -1,7 +1,15 @@
  #ifndef MAINWINDOW_H
  #define MAINWINDOW_H
