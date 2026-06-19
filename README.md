@@ -124,3 +124,31 @@ cmake --build build
   - QSortFilterProxyModel
 - CMake
 - git
+- dpkg
+- dh_make
+
+### Сборка пакета deb
+
+Для проекта подготовлена конфигурация Debian-пакета в каталоге `debian/`, включающая информацию о приложении.
+
+Изменения относительно исходного проекта dirview оформлены в виде патча `dir-view-test.patch` в `debian/patches/`.
+
+Сборка выполняется командой:
+
+```bash
+dpkg-buildpackage -us -uc
+```
+
+После успешной сборки в родительском каталоге будут созданы файлы:
+
+```bash
+../dir-view-test_1.0-1_amd64.deb
+../dir-view-test_1.0-1_amd64.buildinfo
+../dir-view-test_1.0-1_amd64.changes
+```
+
+Установить пакет можно командой:
+
+```bash
+sudo dpkg -i ../dir-view-test_1.0-1_amd64.deb
+```

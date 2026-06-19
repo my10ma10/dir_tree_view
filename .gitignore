@@ -72,3 +72,13 @@ Thumbs.db
 *.exe
 
 CMakeLists.txt.user
+*.deb
+*.changes
+*.buildinfo
+*.dsc
+obj-*
+debian/*.substvars
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/dir-view-test/
+debian/files

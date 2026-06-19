@@ -64,5 +64,16 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(dir_view_test)
 endif()
 
-install(TARGETS dir_view_test
-        RUNTIME DESTINATION bin)
+install(TARGETS dir_view_test RUNTIME DESTINATION bin)
+
+set(CPACK_PACKAGE_NAME "dir_tree_view")
+set(CPACK_PACKAGE_VERSION "1.0")
+set(CPACK_PACKAGE_CONTACT "sokol28.nik@gmail.com")
+
+set(CPACK_DEBIAN_PACKAGE_NAME "dir_view_test")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sokol")
+set(CPACK_DEBIAN_PACKAGE_CONTACT "sokol28.nik@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "A graphical application for viewing the file system tree with support for filtering, sorting, and searching")
+
+set(CPACK_GENERATOR "DEB")
+include(CPack)
