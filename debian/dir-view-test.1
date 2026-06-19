@@ -1,0 +1,72 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2026 sokol <sokol28.nik@gmail.com>,
+.TH Dir-view-test 1 "June 19 2026"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+dir-view-test \- program to view the file system tree with support for filtering, sorting, and searching.
+.SH SYNOPSIS
+.B dir-view-test
+.RI [ options ] 
+.RI [ directory ]
+.SH DESCRIPTION
+This manual page documents briefly describe
+.B dir-view-test
+application, which displays a file system tree using Qt widgets.
+.br
+The application supports:
+.IP \(bu 2
+file and directory filtering using regular expressions
+.IP \(bu 2
+shallow and deep search modes
+.IP \(bu 2
+sorting by columns
+.IP \(bu 2
+directory size calculation commands.
+.PP
+\fBdir-view-test\fP is a program that displays the file system structure as a tree widget.
+.SH OPTIONS
+These programs follow the usual GNU command line syntax, with long
+options starting with two dashes ('\-').
+A summary of options is included below.
+For a complete description, see the Info files.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-\-help\-all
+Show Qt\-specific command line options.
+.TP
+.B \-v, \-\-version
+Show program version.
+.TP
+.B \-c
+Disable custom icons.
+.TP
+.B \-w
+Disable filesystem watching.
+.SH EXAMPLES
+.TP
+.B dir\-view\-test
+Open the user's home directory.
+.TP
+.B dir\-view\-test /tmp
+Open the /tmp directory.
+.SH SEE ALSO
+.BR Dir View Example | Qt Widgets (1),
+.BR QFileSystemModel (1),
+.BR QSortFilterProxyModel (1),
+.BR QTreeView (1).
+.SH AUTHOR
+.br
+sokol

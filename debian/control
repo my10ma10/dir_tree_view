@@ -1,0 +1,21 @@
+Source: dir-view-test
+Section: unknown
+Priority: optional
+Maintainer: sokol <sokol28.nik@gmail.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ cmake,
+ qtbase5-dev,
+Standards-Version: 4.6.2
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/dir-view-test
+#Vcs-Git: https://salsa.debian.org/debian/dir-view-test.git
+
+Package: dir-view-test
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: File system tree viewer on Qt
+ File system viewer with filtering, sorting and search support.

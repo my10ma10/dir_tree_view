@@ -1,0 +1,5 @@
+dir-view-test (1.0-1) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- sokol <sokol28.nik@gmail.com>  Fri, 19 Jun 2026 17:53:43 +0300
