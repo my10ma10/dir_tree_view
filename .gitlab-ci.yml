@@ -1,0 +1,93 @@
+stages:
+  - build
+  - package
+  - package-test
+
+image: ${ASTRA_IMAGE}
+
+variables:
+    BUILD_DIR: build
+    ASTRA_IMAGE: registry.gitflic.ru/project/pilotdev/astra-linux/astra-se:1.8
+    DEB_PACKAGE: dir-view-test_1.0-1_amd64.deb 
+    PACKAGE_NAME: dir-view-test
+
+# before_script:
+    # - apt update
+    # - apt install -y build-essential git cmake qtbase5-dev qt5-default qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
+
+build-job:
+  stage: build
+  tags: 
+    - docker
+  script:
+    - cmake -S . -B ${BUILD_DIR}
+    - cmake --build ${BUILD_DIR}
+  artifacts:
+    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-build
+    when: always
+    expire_in: 1 week
+    paths:
+      - ${BUILD_DIR}/dir_view_test
+      - ${BUILD_DIR}/Makefile
+      - ${BUILD_DIR}/CMakeCache.txt
+      - ${BUILD_DIR}/CPackSourceConfig.cmake
+      - ${BUILD_DIR}/CPackConfig.cmake
+
+
+dpkg-buildpackage-job:
+  stage: package
+  tags: 
+    - docker
+  script:
+    - ls -la
+    - dpkg-buildpackage -us -uc
+    - mkdir package
+    - mv ../*.deb package/
+    - ls -lR ..
+  artifacts:
+    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-dpkg-buildpackage
+    when: always
+    expire_in: 1 week
+    paths:
+      - package/
+  needs:
+    - build-job
+
+cpack-job:
+  stage: package
+  tags: 
+    - docker
+  script:
+    - cd ${BUILD_DIR}
+    - cpack -G DEB
+    - mkdir -p ../package
+    - mv *.deb ../package
+    - ls -lR ..
+  artifacts:
+    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-cpack
+    when: always
+    expire_in: 1 week
+    paths:
+      - package/
+  needs:
+    - build-job
+
+
+package-test-job:
+  stage: package-test
+  tags: 
+    - docker
+  script:
+    - ls -la
+    - find . -name "*.deb"
+    - echo "[INFO] Package installation"
+    - dpkg -i package/${DEB_PACKAGE} || true
+    - apt install -f -y
+    - echo "[INFO] Check files in the debian package"
+    - dpkg -c ${DEB_PACKAGE}
+    - which dir_view_test
+    - echo "[INFO] Check installed files"
+    - dpkg -L ${PACKAGE_NAME}
+  needs: 
+    - dpkg-buildpackage-job
+    - cpack-job
