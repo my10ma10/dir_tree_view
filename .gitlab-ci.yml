@@ -12,11 +12,9 @@ variables:
     PACKAGE_NAME: dir-view-test
 
 before_script:
+    - apt-get update
     - apt-get install -y apt-transport-https ca-certificates
-    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/repository-main stable main contrib non-free" > /etc/apt/sources.list.d/astra-dev.list
-    - apt-cache search build-essential
-    - apt-cache search cmake
-    - apt-cache search qt5
+    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/repository-deb stable main" > /etc/apt/sources.list.d/astra-dev.list
     - apt-get update
     - apt-get install -y build-essential git cmake qtbase5-dev qt5-default qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
 
