@@ -44,11 +44,12 @@ build-job:
 
 dpkg-buildpackage-job:
   stage: package
-  tags: 
+  tags:
     - docker
   script:
     - ls -la
     - ls -la ..
+    - rm -rf build
     - git archive --format=tar e31005e | xz > ../dir-view-test_1.0.orig.tar.xz
     - dpkg-buildpackage -us -uc
     - mkdir package
