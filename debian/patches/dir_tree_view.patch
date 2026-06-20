@@ -1,5 +1,129 @@
+diff --git a/.gitignore b/.gitignore
+index b4ea3c6..22bbcee 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -72,3 +72,13 @@ Thumbs.db
+ *.exe
+ 
+ CMakeLists.txt.user
++*.deb
++*.changes
++*.buildinfo
++*.dsc
++obj-*
++debian/*.substvars
++debian/.debhelper/
++debian/debhelper-build-stamp
++debian/dir-view-test/
++debian/files
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+new file mode 100644
+index 0000000..f2b2bc0
+--- /dev/null
++++ b/.gitlab-ci.yml
+@@ -0,0 +1,100 @@
++stages:
++  - build
++  - package
++  - package-test
++
++image: ${ASTRA_IMAGE}
++
++variables:
++    BUILD_DIR: build
++    ASTRA_IMAGE: registry.gitflic.ru/project/pilotdev/astra-linux/astra-se:1.8
++    DEB_PACKAGE: dir-view-test_1.0-1_amd64.deb 
++    PACKAGE_NAME: dir-view-test
++
++before_script:
++    - apt-get update
++    - apt-get install -y apt-transport-https ca-certificates
++    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/uu/1/main-repository stable main" > /etc/apt/sources.list.d/astra-uu-main.list
++    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/uu/1/extended-repository stable main" > /etc/apt/sources.list.d/astra-uu-extended.list
++    - apt-cache search build-essential
++    - apt-cache search cmake
++    - apt-get update
++    - apt-get install -y build-essential git cmake qtbase5-dev qt5-default qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
++
++build-job:
++  stage: build
++  tags: 
++    - docker
++  script:
++    - ls -la
++    - cmake -S . -B ${BUILD_DIR}
++    - cmake --build ${BUILD_DIR}
++  artifacts:
++    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-build
++    when: always
++    expire_in: 1 week
++    paths:
++      - ${BUILD_DIR}/dir_view_test
++      - ${BUILD_DIR}/Makefile
++      - ${BUILD_DIR}/CMakeCache.txt
++      - ${BUILD_DIR}/CPackSourceConfig.cmake
++      - ${BUILD_DIR}/CPackConfig.cmake
++
++
++dpkg-buildpackage-job:
++  stage: package
++  tags: 
++    - docker
++  script:
++    - ls -la
++    - dpkg-buildpackage -us -uc
++    - mkdir package
++    - mv ../*.deb package/
++    - ls -lR ..
++  artifacts:
++    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-dpkg-buildpackage
++    when: always
++    expire_in: 1 week
++    paths:
++      - package/
++  needs:
++    - build-job
++
++cpack-job:
++  stage: package
++  tags: 
++    - docker
++  script:
++    - cd ${BUILD_DIR}
++    - cpack -G DEB
++    - mkdir -p ../package
++    - mv *.deb ../package
++    - ls -lR ..
++  artifacts:
++    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-cpack
++    when: always
++    expire_in: 1 week
++    paths:
++      - package/
++  needs:
++    - build-job
++
++
++package-test-job:
++  stage: package-test
++  tags: 
++    - docker
++  script:
++    - ls -la
++    - find . -name "*.deb"
++    - echo "[INFO] Package installation"
++    - dpkg -i package/${DEB_PACKAGE} || true
++    - apt install -f -y
++    - echo "[INFO] Check files in the debian package"
++    - dpkg -c ${DEB_PACKAGE}
++    - which dir_view_test
++    - echo "[INFO] Check installed files"
++    - dpkg -L ${PACKAGE_NAME}
++  needs: 
++    - dpkg-buildpackage-job
++    - cpack-job
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f10e735..6155f84 100644
+index f10e735..2ce479b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -19,6 +19,12 @@ set(PROJECT_SOURCES
@@ -15,13 +139,24 @@ index f10e735..6155f84 100644
  )
  
  if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-@@ -57,3 +63,6 @@ set_target_properties(dir_view_test PROPERTIES
+@@ -57,3 +63,17 @@ set_target_properties(dir_view_test PROPERTIES
  if(QT_VERSION_MAJOR EQUAL 6)
      qt_finalize_executable(dir_view_test)
  endif()
 +
-+install(TARGETS dir_view_test
-+        RUNTIME DESTINATION bin)
++install(TARGETS dir_view_test RUNTIME DESTINATION bin)
++
++set(CPACK_PACKAGE_NAME "dir_tree_view")
++set(CPACK_PACKAGE_VERSION "1.0")
++set(CPACK_PACKAGE_CONTACT "sokol28.nik@gmail.com")
++
++set(CPACK_DEBIAN_PACKAGE_NAME "dir_view_test")
++set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sokol")
++set(CPACK_DEBIAN_PACKAGE_CONTACT "sokol28.nik@gmail.com")
++set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "A graphical application for viewing the file system tree with support for filtering, sorting, and searching")
++
++set(CPACK_GENERATOR "DEB")
++include(CPack)
 diff --git a/LICENSE b/LICENSE
 new file mode 100644
 index 0000000..7922633
@@ -51,10 +186,10 @@ index 0000000..7922633
 +SOFTWARE.
 diff --git a/README.md b/README.md
 new file mode 100644
-index 0000000..9e1de99
+index 0000000..6907fc0
 --- /dev/null
 +++ b/README.md
-@@ -0,0 +1,126 @@
+@@ -0,0 +1,154 @@
 +# Dir Tree Viewer
 +
 +Графическое приложение на Qt для просмотра дерева файловой системы с поддержкой фильтрации, сортировки и поиска.
@@ -181,6 +316,34 @@ index 0000000..9e1de99
 +  - QSortFilterProxyModel
 +- CMake
 +- git
++- dpkg
++- dh_make
++
++### Сборка пакета deb
++
++Для проекта подготовлена конфигурация Debian-пакета в каталоге `debian/`, включающая информацию о приложении.
++
++Изменения относительно исходного проекта dirview оформлены в виде патча `dir-view-test.patch` в `debian/patches/`.
++
++Сборка выполняется командой:
++
++```bash
++dpkg-buildpackage -us -uc
++```
++
++После успешной сборки в родительском каталоге будут созданы файлы:
++
++```bash
++../dir-view-test_1.0-1_amd64.deb
++../dir-view-test_1.0-1_amd64.buildinfo
++../dir-view-test_1.0-1_amd64.changes
++```
++
++Установить пакет можно командой:
++
++```bash
++sudo dpkg -i ../dir-view-test_1.0-1_amd64.deb
++```
 diff --git a/dir_filter_model.cpp b/dir_filter_model.cpp
 new file mode 100644
 index 0000000..4f552b9
