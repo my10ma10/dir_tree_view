@@ -48,6 +48,8 @@ dpkg-buildpackage-job:
     - docker
   script:
     - ls -la
+    - ls -la ..
+    - git archive --format=tar e31005e | xz > ../dir-view-test_1.0.orig.tar.xz
     - dpkg-buildpackage -us -uc
     - mkdir package
     - mv ../*.deb package/
