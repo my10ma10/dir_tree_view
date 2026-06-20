@@ -18,10 +18,10 @@ index b4ea3c6..22bbcee 100644
 +debian/files
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
 new file mode 100644
-index 0000000..f2b2bc0
+index 0000000..d13a955
 --- /dev/null
 +++ b/.gitlab-ci.yml
-@@ -0,0 +1,100 @@
+@@ -0,0 +1,104 @@
 +stages:
 +  - build
 +  - package
@@ -44,6 +44,7 @@ index 0000000..f2b2bc0
 +    - apt-cache search cmake
 +    - apt-get update
 +    - apt-get install -y build-essential git cmake qtbase5-dev qt5-default qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
++    - apt-get install -y debhelper
 +
 +build-job:
 +  stage: build
@@ -67,10 +68,13 @@ index 0000000..f2b2bc0
 +
 +dpkg-buildpackage-job:
 +  stage: package
-+  tags: 
++  tags:
 +    - docker
 +  script:
 +    - ls -la
++    - ls -la ..
++    - rm -rf build
++    - git archive --format=tar e31005e | xz > ../dir-view-test_1.0.orig.tar.xz
 +    - dpkg-buildpackage -us -uc
 +    - mkdir package
 +    - mv ../*.deb package/
