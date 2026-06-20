@@ -12,12 +12,14 @@ variables:
     PACKAGE_NAME: dir-view-test
 
 before_script:
-  - apt-get update
-  - apt-get install -y apt-transport-https ca-certificates
-  - echo "deb http://deb.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list.d/debian.list
-  - apt-get update
-  - apt-get install -y build-essential git cmake qtbase5-dev qt5-qmake qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
-
+    - apt-get update
+    - apt-get install -y apt-transport-https ca-certificates
+    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/uu/1/main-repository stable main" > /etc/apt/sources.list.d/astra-uu-main.list
+    - echo "deb https://dl.astralinux.ru/astra/frozen/1.8_x86-64/1.8.1/uu/1/extended-repository stable main" > /etc/apt/sources.list.d/astra-uu-extended.list
+    - apt-cache search build-essential
+    - apt-cache search cmake
+    - apt-get update
+    - apt-get install -y build-essential git cmake qtbase5-dev qt5-default qtdeclarative5-dev qtquickcontrols2-5-dev qttools5-dev
 
 build-job:
   stage: build
