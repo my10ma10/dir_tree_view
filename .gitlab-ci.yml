@@ -7,7 +7,7 @@ image: ${ASTRA_IMAGE}
 
 variables:
     BUILD_DIR: build
-    ASTRA_IMAGE: registry.gitflic.ru/project/pilotdev/astra-linux/astra-se:1.8
+    ASTRA_IMAGE: astra-builder:1.0
     DEB_PACKAGE: dir-view-test_1.0-1_amd64.deb 
     PACKAGE_NAME: dir-view-test
 
